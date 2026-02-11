@@ -1,69 +1,60 @@
 #include "binary_trees.h"
-binary_tree_t *_binary_tree_sibling(const binary_tree_t *node);
-int _binary_tree_is_leaf(const binary_tree_t *node);
+static size_t tree_size(const binary_tree_t *tree);
 
 /**
  * binary_tree_is_complete - Checks if a binary tree is complete
  * @tree: Pointer to the root node of the tree
  *
- * Return: 1 if tree is complete, 0 otherwise
+ * Return: 1 if complete, otherwise 0
  */
 int binary_tree_is_complete(const binary_tree_t *tree)
 {
-	int left_complete, right_complete;
+	const binary_tree_t **queue, *current;
+	size_t size, front = 0, rear = 0;
+	int seen_null = 0;
 
-	if (!tree)
+	if (tree == NULL)
 		return (0);
-	if (tree->left == NULL && tree->right == NULL)
-		return (1);
 
-	left_complete = binary_tree_is_complete(tree->left);
-	right_complete = binary_tree_is_complete(tree->right);
-	if (left_complete == 1 && right_complete == 1)
-		return (1);
+	size = tree_size(tree);
+	queue = malloc(sizeof(*queue) * (size * 2 + 1));
+	if (queue == NULL)
+		return (0);
 
-	if (left_complete == 1 && right_complete == 0)
+	queue[rear++] = tree;
+	while (front < rear)
 	{
-		binary_tree_t *sibling = _binary_tree_sibling(tree);
-		if (_binary_tree_is_leaf(sibling))
-			return (1);
-		else
+		current = queue[front++];
+		if (current == NULL)
+		{
+			seen_null = 1;
+			continue;
+		}
+
+		if (seen_null)
+		{
+			free(queue);
 			return (0);
+		}
+
+		queue[rear++] = current->left;
+		queue[rear++] = current->right;
 	}
 
-	return (0);
+	free(queue);
+	return (1);
 }
 
 /**
- * _binary_tree_sibling - Finds the sibling of a node
- * @node: Pointer to the node to find the sibling
+ * tree_size - Measures the size of a binary tree
+ * @tree: Pointer to the root node of the tree
  *
- * Return: Pointer to the sibling node, or NULL if node has no sibling
+ * Return: Size of the tree
  */
-binary_tree_t *_binary_tree_sibling(const binary_tree_t *node)
+static size_t tree_size(const binary_tree_t *tree)
 {
-	binary_tree_t *sibling;
-
-	if (!node || !node->parent)
-		return (NULL);
-	if (node->parent->left == node)
-		sibling = node->parent->right;
-	else
-		sibling = node->parent->left;
-	return (sibling);
-}
-
-/**
- * _binary_tree_is_leaf - Checks if a node is a leaf
- * @node: Pointer to the node to check
- *
- * Return: 1 if node is a leaf, 0 otherwise
- */
-int _binary_tree_is_leaf(const binary_tree_t *node)
-{
-	if (!node)
+	if (tree == NULL)
 		return (0);
-	if (!node->left && !node->right)
-		return (1);
-	return (0);
+
+	return (1 + tree_size(tree->left) + tree_size(tree->right));
 }
