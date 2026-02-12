@@ -1,7 +1,8 @@
 #include "binary_trees.h"
 #include <limits.h>
 
-static int is_avl_helper(const binary_tree_t *tree, int min, int max, int *height);
+static int is_avl_helper(const binary_tree_t *tree, int min, int max,
+			 int *height);
 static int max_int(int a, int b);
 
 /**
@@ -29,7 +30,8 @@ int binary_tree_is_avl(const binary_tree_t *tree)
  *
  * Return: 1 if valid AVL Tree, otherwise 0
  */
-static int is_avl_helper(const binary_tree_t *tree, int min, int max, int *height)
+static int is_avl_helper(const binary_tree_t *tree, int min, int max,
+			 int *height)
 {
 	int left_height = 0, right_height = 0, balance;
 
