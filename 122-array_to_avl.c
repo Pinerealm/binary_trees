@@ -24,8 +24,6 @@ avl_t *array_to_avl(int *array, size_t size)
 			continue;
 
 		node = avl_insert(&root, array[i]);
-		binary_tree_print(root);
-		printf("\n");
 		if (node == NULL)
 			return (NULL);
 	}
